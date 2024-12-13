@@ -1,1 +1,3 @@
 mqttBroker: tcp://localhost:1883
+uniqueSerialNumber: false
+serialnumber: d9c717cb-158d-4a63-ac2b-45aa8973a5f3

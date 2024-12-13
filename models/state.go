@@ -1,33 +1,6 @@
 package models
 
-type NodeState struct {
-	NodeID          string "json:\"nodeId\""
-	SequenceID      int    "json:\"sequenceId\""
-	Released        bool   "json:\"released\""
-	NodeDescription string "json:\"nodeDescription\""
-	NodePosition    struct {
-		X     float64 "json:\"x\""
-		Y     float64 "json:\"y\""
-		MapID string  "json:\"mapId\""
-		Theta float64 "json:\"theta\""
-	} "json:\"nodePosition\""
-}
-
-type EdgeState struct {
-	EdgeID          string `json:"edgeId"`
-	SequenceID      int    `json:"sequenceId"`
-	Released        bool   `json:"released"`
-	EdgeDescription string `json:"edgeDescription"`
-	Trajectory      struct {
-		Degree        int           `json:"degree"`
-		KnotVector    []interface{} `json:"knotVector"`
-		ControlPoints []struct {
-			X      float64 `json:"x"`
-			Y      float64 `json:"y"`
-			Weight float64 `json:"weight"`
-		} `json:"controlPoints"`
-	} `json:"trajectory"`
-}
+import "time"
 
 type ActionState struct {
 	ActionID          string `json:"actionId"`
@@ -117,4 +90,82 @@ type State struct {
 	Velocity              Velocity      `json:"velocity"`
 	Loads                 []Load        `json:"loads"`
 	Information           []Info        `json:"information"`
+}
+
+// Nodes are any point or region within a map
+// that represents a place, eg. a charger, a window, a door, a hole.
+// Anything really.
+func (state *State) FlyTowardsNode(x float64, y float64) {
+	if state.AgvPosition.X > x {
+		state.AgvPosition.X--
+	} else if state.AgvPosition.X < x {
+		state.AgvPosition.X++
+	}
+
+	if state.AgvPosition.Y > y {
+		state.AgvPosition.Y--
+	} else if state.AgvPosition.Y < y {
+		state.AgvPosition.Y++
+	}
+
+}
+
+func GetDefaultState(SN string) State {
+	nodeStates := []NodeState{}
+
+	defaultMap := Map{
+		MapID:          "99187cd1-8b4b-4f5a-ac11-e455928409de",
+		MapVersion:     "0.1.1",
+		MapStatus:      "beta",
+		MapDescription: "Just a random map",
+	}
+
+	state := State{
+		HeaderID:           0,
+		Timestamp:          time.Now().Format("YYYY-MM-DDTHH:mm:ss.ffZ"),
+		Version:            "1.2.3",
+		Manufacturer:       "Banana Republic",
+		SerialNumber:       SN,
+		OrderID:            "",
+		OrderUpdateID:      0,
+		LastNodeID:         "",
+		LastNodeSequenceID: 0,
+		NodeStates:         nodeStates,
+		EdgeStates:         []EdgeState{},
+		Driving:            false,
+		ActionStates:       []ActionState{},
+		BatteryState: BatteryState{
+			BatteryCharge:  99,
+			Charging:       false,
+			BatteryVoltage: 14,
+			BatteryHealth:  100,
+			Reach:          0,
+		},
+		OperatingMode:         "",
+		Errors:                []Error{},
+		SafetyState:           SafetyState{},
+		Maps:                  []Map{defaultMap},
+		ZoneSetID:             "",
+		Paused:                false,
+		NewBaseRequest:        false,
+		DistanceSinceLastNode: 0,
+		AgvPosition: AgvPosition{
+			X:                   150,
+			Y:                   150,
+			Theta:               0,
+			MapID:               defaultMap.MapID,
+			PositionInitialized: false,
+			MapDescription:      defaultMap.MapDescription,
+			LocalizationScore:   0,
+			DeviationRange:      0,
+		},
+		Velocity: Velocity{
+			Vx:    10,
+			Vy:    10,
+			Omega: 0,
+		},
+		Loads:       []Load{},
+		Information: []Info{},
+	}
+	return state
 }
