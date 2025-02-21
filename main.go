@@ -36,8 +36,10 @@ func main() {
 	}
 
 	state := models.GetDefaultState(SN)
-	ticksPrMqtt := 5
+	ticksPrMqtt := 1
 	tick := 0
+
+	goBack := false
 	for {
 		// Update time of message
 		state.Timestamp = time.Now().Format(time.RFC3339)
@@ -46,9 +48,13 @@ func main() {
 		if state.BatteryState.BatteryCharge < 30 {
 			state.BatteryState.BatteryCharge = 99
 		}
+		if !goBack {
+			goBack = state.FlyTowardsNode(1000, 350, 5)
+		} else {
+			goBack = !state.FlyTowardsNode(700, 400, 5)
+		}
 
-		state.FlyTowardsNode(380, 200)
-		time.Sleep(time.Duration(tick) * time.Second)
+		time.Sleep(time.Duration(1) * time.Second)
 		if tick == 0 {
 			message, err := json.Marshal(state)
 			if err != nil {

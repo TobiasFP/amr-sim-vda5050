@@ -7,7 +7,7 @@ func TestFlyTowardsNode(t *testing.T) {
 	// We start at 150, 150.
 	// Lets move towrads 140,160
 	// For now, we move 1 unit towards each [x,y]
-	state.FlyTowardsNode(140, 160)
+	state.FlyTowardsNode(140, 160, 1)
 	if state.AgvPosition.X != 149 {
 		t.Errorf("got %.2f, wanted %.2f", state.AgvPosition.X, 149.0)
 	}

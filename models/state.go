@@ -95,19 +95,20 @@ type State struct {
 // Nodes are any point or region within a map
 // that represents a place, eg. a charger, a window, a door, a hole.
 // Anything really.
-func (state *State) FlyTowardsNode(x float64, y float64) {
+func (state *State) FlyTowardsNode(x float64, y float64, speed float64) bool {
 	if state.AgvPosition.X > x {
-		state.AgvPosition.X--
+		state.AgvPosition.X -= speed
 	} else if state.AgvPosition.X < x {
-		state.AgvPosition.X++
+		state.AgvPosition.X += speed
 	}
 
 	if state.AgvPosition.Y > y {
-		state.AgvPosition.Y--
+		state.AgvPosition.Y -= speed
 	} else if state.AgvPosition.Y < y {
-		state.AgvPosition.Y++
+		state.AgvPosition.Y += speed
 	}
 
+	return (state.AgvPosition.X == x && state.AgvPosition.Y == y)
 }
 
 func GetDefaultState(SN string) State {
@@ -115,15 +116,15 @@ func GetDefaultState(SN string) State {
 
 	defaultMap := Map{
 		MapID:          "99187cd1-8b4b-4f5a-ac11-e455928409de",
-		MapVersion:     "0.1.1",
+		MapVersion:     "1.2.3",
 		MapStatus:      "beta",
-		MapDescription: "Just a random map",
+		MapDescription: "nitup kcuf",
 	}
 
 	state := State{
 		HeaderID:           0,
 		Timestamp:          time.Now().Format("YYYY-MM-DDTHH:mm:ss.ffZ"),
-		Version:            "1.2.3",
+		Version:            "2.1.0",
 		Manufacturer:       "Banana Republic",
 		SerialNumber:       SN,
 		OrderID:            "",
@@ -150,8 +151,8 @@ func GetDefaultState(SN string) State {
 		NewBaseRequest:        false,
 		DistanceSinceLastNode: 0,
 		AgvPosition: AgvPosition{
-			X:                   150,
-			Y:                   150,
+			X:                   250,
+			Y:                   400,
 			Theta:               0,
 			MapID:               defaultMap.MapID,
 			PositionInitialized: false,
